@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  db_api:
+    image: postgres:13-alpine
+    ports:
+      - ${PGSQL_PORT:-5432}:5432
+    volumes:
+      - postgres_data_api:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+  db_app:
+    image: postgres:13-alpine
+    ports:
+      - ${PGSQL_PORT:-5433}:5432
+    volumes:
+      - postgres_data_app:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+  api:
+    tty: true
+    stdin_open: true
+    build:
+      context: ./ArtGalleryApi/
+      dockerfile: Dockerfile
+    command: rails s -p 3000 -b '0.0.0.0'
+    entrypoint: ./entrypoint.sh
+    env_file:
+      - ./ArtGalleryApi/.env
+    volumes:
+      - ./ArtGalleryApi:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db_api
+  app:
+    tty: true
+    stdin_open: true
+    build:
+      context: ./ArtGalleryApp/
+      dockerfile: Dockerfile
+    command: rails s -p 3000 -b '0.0.0.0'
+    entrypoint: ./entrypoint.sh
+    env_file:
+      - ./ArtGalleryApp/.env
+    volumes:
+      - ./ArtGalleryApp:/app
+    ports:
+      - "3001:3000"
+    depends_on:
+      - db_app
+
+volumes:
+  postgres_data_api:
+  postgres_data_app:

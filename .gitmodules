@@ -1,0 +1,6 @@
+[submodule "ArtGalleryApi"]
+	path = ArtGalleryApi
+	url = git@github.com:NahumEnroute/ArtGalleryApi.git
+[submodule "ArtGalleryApp"]
+	path = ArtGalleryApp
+	url = git@github.com:NahumEnroute/ArtGalleryApp.git
